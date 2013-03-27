@@ -9,8 +9,8 @@ Vagrant::Config.run do |config|
     config.vm.host_name = "dev.local"
 
     config.vm.share_folder "vagrant", "/vagrant", "."
-
-        config.vm.share_folder "project", "/var/www/vhosts/dev.local", "..", :nfs => true, :create => true, :remount => true
+	#config.vm.synced_folder "D:\\Programme\\wamp\\www\\tipp", "/var/www/vhosts/dev.local"
+    config.vm.share_folder "gambify", "/var/www/vhosts/dev.local", "D:\\Programme\\wamp\\www\\tipp", :nfs => false, :create => true, :remount => true
     
     config.vm.provision :shell, :inline => "echo \"Europe/Berlin\" | sudo tee /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata"
 

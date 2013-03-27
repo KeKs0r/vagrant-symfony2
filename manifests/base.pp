@@ -101,7 +101,8 @@ php::module { "dev": }
     php::module { "xdebug": }
     php::module { "imap": }
     php::module { "apc":
-      module_prefix => "php5-",
+      module_prefix => "php-",
+#      module_prefix => "php5-",
     }
     php::module { "sqlite": }
 
@@ -142,14 +143,14 @@ system::package { "libsqlite3-dev":
     require => Package["ruby"],
 }
 
-exec { "capifony-install":
-    command => "gem install -q --no-verbose --no-ri --no-rdoc capifony",
-    path    => "/bin:/usr/bin",
-    require => [
-        Package["ruby"],
-        Package["libsqlite3-dev"],
-    ],
-}
+#exec { "capifony-install":
+#    command => "gem install -q --no-verbose --no-ri --no-rdoc capifony",
+#    path    => "/bin:/usr/bin",
+#    require => [
+#        Package["ruby"],
+#        Package["libsqlite3-dev"],
+#    ],
+#}
 
 
 
@@ -161,7 +162,7 @@ class { "composer":
 
 
 system::package { "zsh": }
-
+#
 exec { "oh-my-zsh-install":
     command => "git clone https://github.com/robbyrussell/oh-my-zsh.git /home/vagrant/.oh-my-zsh",
     path    => "/bin:/usr/bin",
@@ -178,8 +179,8 @@ exec { "default-zsh-shell":
 file { "zshrc-file-creation":
     path    => "/home/vagrant/.zshrc",
     ensure  => "/vagrant/files/.zshrc",
-    require => Exec["oh-my-zsh-install"],
-    owner   => "vagrant",
+   require => Exec["oh-my-zsh-install"],
+   owner   => "vagrant",
     group   => "vagrant",
     replace => false,
 }
