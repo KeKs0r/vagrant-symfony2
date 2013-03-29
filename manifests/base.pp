@@ -152,6 +152,21 @@ system::package { "libsqlite3-dev":
 #    ],
 #}
 
+# Change user / group
+#exec { "UsergroupChange" :
+#    command => "sed -i 's/User apache/User vagrant/ ; s/Group apache/Group vagrant/' /etc/httpd/conf/httpd.conf",
+#    onlyif  => "grep -c 'User apache' /etc/httpd/conf/httpd.conf",
+#    require => Package["apache"],
+#    notify  => Service['apache'],
+#}
+
+file { "/var/www/vhosts/dev.local/app/cache" :
+#    owner  => "root",
+#    group  => "vagrant",
+    mode   => 0777,
+    require => Package["php"],
+}
+
 
 
 class { "composer":
@@ -185,4 +200,31 @@ file { "zshrc-file-creation":
     replace => false,
 }
 
+
+# Create our initial db
+    exec { "database_create" :
+        command => "/usr/bin/php /var/www/vhosts/dev.local/app/console doctrine:database:create || true",
+        require => [ Service["mysql"] ],
+    }
+	
+	exec { "schema_create" :
+        command => "/usr/bin/php /var/www/vhosts/dev.local/app/console doctrine:schema:create || true",
+        require => [ Service["mysql"], Exec["database_create"] ],
+    }
+
+    exec { "fixture_load" :
+        command => "/usr/bin/php /var/www/vhosts/dev.local/app/console doctrine:fixtures:load --no-interaction || true",
+        require => Exec["schema_create"],
+    }
+
+class { "solr":
+  install => "source",
+  install_source => "http://www.apache.org/dist/lucene/solr/4.2.0/solr-4.2.0.tgz",
+}
+
+file { "solrconfig.xml":
+    path    => "/etc/solr/conf/solrconfig.xml",
+    ensure  => "/vagrant/files/solr/conf/solrconfig.xml",
+    require => Package["solr"],
+}
 
