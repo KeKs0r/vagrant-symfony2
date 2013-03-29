@@ -1,5 +1,6 @@
 Vagrant::Config.run do |config|
-    config.vm.box     = "squeeze64puppet3"
+    #config.vm.box = "precise64"
+	config.vm.box     = "squeeze64puppet3"
     config.vm.box_url = "http://l4bs.slynett.com/vagrant/squeeze64-puppet3.box"
     
     config.vm.customize [ "modifyvm", :id, "--name", "Default PHP 5.3 VM 525ffe16a92f77e2c5ff02870ab57c78" ]
